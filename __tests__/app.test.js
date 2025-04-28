@@ -7,6 +7,7 @@ const app = require("../api");
 const topicsdata = require("../db/data/test-data/index");
 
 const seed = require("../db/seeds/seed");
+const articles = require("../db/data/test-data/articles");
 
 /* Set up your beforeEach & afterAll functions here */
 
@@ -47,6 +48,37 @@ describe("Task 2 GET/api/topics", () => {
       .expect(404)
       .then((result) => {
         expect(result.body.msg).toBe("Not Found");
+      });
+  });
+});
+
+describe("Task 3 GET/api/articles", () => {
+  test("200: Responds With array of articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((result) => {
+        const articles = result.body.articles;
+        expect(articles.length).not.toBe(0);
+      });
+  });
+  test("200: Responds With singal Article from articles", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then((result) => {
+        const article = result.body.article[0];
+        console.log(article);
+        expect(article).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          author: expect.any(String),
+        });
       });
   });
 });
