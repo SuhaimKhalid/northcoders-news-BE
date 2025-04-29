@@ -10,7 +10,6 @@
     "prepare": "husky install",
     "start": "node listen.js",
     "test-seed": "jest seed.test.js"
-
   },
   "repository": {
     "type": "git",
@@ -28,6 +27,7 @@
     "husky": "^8.0.2",
     "jest": "^27.5.1",
     "jest-extended": "^2.0.0",
+    "jest-sorted": "^1.0.15",
     "supertest": "^7.1.0"
   },
   "dependencies": {
@@ -36,8 +36,6 @@
     "pg-format": "^1.0.4"
   },
   "jest": {
-    "setupFilesAfterEnv": [
-      "jest-extended/all"
-    ]
-  }
+  "setupFilesAfterEnv": ["jest-sorted"]
+}
 }
