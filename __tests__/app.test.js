@@ -36,9 +36,11 @@ describe("Task 2 GET/api/topics", () => {
       .get("/api/topics")
       .expect(200)
       .then((result) => {
-        const topic = result.body.topics[0];
-        expect(typeof topic.slug).toBe("string");
-        expect(typeof topic.description).toBe("string");
+        const topics = result.body.topics;
+        topics.forEach((topic) => {
+          expect(typeof topic.slug).toBe("string");
+          expect(typeof topic.description).toBe("string");
+        });
       });
   });
 
@@ -67,7 +69,7 @@ describe("Task 3 GET/api/articles", () => {
       .get("/api/articles/1")
       .expect(200)
       .then((result) => {
-        const article = result.body.article[0];
+        const article = result.body.article;
         console.log(article);
         expect(article).toMatchObject({
           article_id: expect.any(Number),
@@ -79,6 +81,22 @@ describe("Task 3 GET/api/articles", () => {
           article_img_url: expect.any(String),
           author: expect.any(String),
         });
+      });
+  });
+  test("404: Not Found Invalid article Id", () => {
+    return request(app)
+      .get("/api/articles/1000")
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("Not Found");
+      });
+  });
+  test("400: Bad Request with wrong data Type", () => {
+    return request(app)
+      .get("/api/articles/article_id")
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe("Bad Request");
       });
   });
 });
