@@ -21,13 +21,25 @@ app.get("/api/articles", getAllArticles);
 
 app.get("/api/articles/:article_id", getArticleId);
 
-// app.use((err, req, res, next) => {
-//   console.log(err);
-// });
+// 400 handler - Handle invalid User Type
+app.use((err, req, res, next) => {
+  if (err.code === "22P02") {
+    res.status(400).send({ msg: "Bad Request" });
+  } else {
+    next(err);
+  }
+});
+// 404 handler - Handle invalid ID
+app.use((err, req, res, next) => {
+  if (err.status && err.msg) {
+    res.status(err.status).send({ msg: err.msg });
+  } else next(err);
+});
 
 // 404 handler - This must be after all routes
 app.all("/*slpat", (req, res) => {
   res.status(404).send({ msg: "Not Found" });
+  next(err);
 });
 
 // 500 Error Status

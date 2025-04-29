@@ -4,7 +4,8 @@ const {
 } = require("../models/articles-model");
 
 const getAllArticles = (req, res, next) => {
-  return selectAllArticles()
+  const { article_id } = req.params;
+  return selectAllArticles(article_id)
     .then((result) => {
       res.status(200).send({ articles: result });
     })
