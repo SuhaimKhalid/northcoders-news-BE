@@ -100,3 +100,44 @@ describe("Task 3 GET/api/articles", () => {
       });
   });
 });
+
+describe.only("Task 4 GET/api/articles", () => {
+  test("Responds With array of articles", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=desc")
+      .expect(200)
+      .then((result) => {
+        const articles = result.body.articles;
+        expect(articles.length).toBeGreaterThan(0);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  describe("Error handing", () => {
+    test("200: Responds With array of articles", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((result) => {
+          const articles = result.body.articles;
+          expect(articles.length).not.toBe(0);
+        });
+    });
+    test("404: Not Found Invalid article Id", () => {
+      return request(app)
+        .get("/api/articles/10000")
+        .expect(404)
+        .then((result) => {
+          expect(result.body.msg).toBe("Not Found");
+        });
+    });
+    test("400: Bad Request with wrong data Type", () => {
+      return request(app)
+        .get("/api/articles/sort_by=author")
+        .expect(400)
+        .then((result) => {
+          expect(result.body.msg).toBe("Bad Request");
+        });
+    });
+  });
+});
