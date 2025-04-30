@@ -6,6 +6,10 @@ const { getApi } = require("./controllers/api-controller");
 const { getTopics } = require("./controllers/topics-controller");
 
 const {
+  getAllCommentOfAticleId,
+} = require("./controllers/comments-controller");
+
+const {
   getAllArticles,
   getArticleId,
 } = require("./controllers/articles-controller");
@@ -20,6 +24,8 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getAllArticles);
 
 app.get("/api/articles/:article_id", getArticleId);
+
+app.get("/api/articles/:article_id/comments", getAllCommentOfAticleId);
 
 // 400 handler - Handle invalid User Type
 app.use((err, req, res, next) => {

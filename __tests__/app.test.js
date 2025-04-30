@@ -101,7 +101,7 @@ describe("Task 3 GET/api/articles", () => {
   });
 });
 
-describe.only("Task 4 GET/api/articles", () => {
+describe("Task 4 GET/api/articles", () => {
   test("Responds With array of articles", () => {
     return request(app)
       .get("/api/articles?sort_by=created_at&order=desc")
@@ -134,6 +134,47 @@ describe.only("Task 4 GET/api/articles", () => {
     test("400: Bad Request with wrong data Type", () => {
       return request(app)
         .get("/api/articles/sort_by=author")
+        .expect(400)
+        .then((result) => {
+          expect(result.body.msg).toBe("Bad Request");
+        });
+    });
+  });
+});
+
+describe("Task 5 GET /api/articles/:article_id/comments", () => {
+  test("Responds With array of comments with specific Article ID ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?sort_by=created_at&order_by=desc")
+      .expect(200)
+      .then((result) => {
+        const comments = result.body.comments;
+        expect(comments.length).toBeGreaterThan(0);
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  describe("Error handing", () => {
+    test("200: Responds With array of articles", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((result) => {
+          const comments = result.body.comments;
+          expect(comments.length).not.toBe(0);
+        });
+    });
+    test("404: Not Found Invalid article Id", () => {
+      return request(app)
+        .get("/api/articles/10000/comments")
+        .expect(404)
+        .then((result) => {
+          expect(result.body.msg).toBe("Not Found");
+        });
+    });
+    test("400: Bad Request with wrong data Type", () => {
+      return request(app)
+        .get("/api/articles/1/comments?sort_by=author")
         .expect(400)
         .then((result) => {
           expect(result.body.msg).toBe("Bad Request");
