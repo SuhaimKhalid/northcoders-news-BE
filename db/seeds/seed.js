@@ -1,5 +1,7 @@
 const db = require("../connection");
 const format = require("pg-format");
+const { convertTimestampToDate, createRef } = require("./utils.js");
+
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
     .query(`DROP TABLE IF EXISTS comments`)
@@ -85,26 +87,33 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       });
       const insertArticleData = format(
         `
-        INSERT INTO articles (title,topic,author,body,created_at,votes,article_img_url) VALUES %L`,
+        INSERT INTO articles (title,topic,author,body,created_at,votes,article_img_url) VALUES %L RETURNING *`,
         formatedArticelTale
       );
       return db.query(insertArticleData);
     })
-    .then(() => {
+    .then((result) => {
+      const articleReferenceObject = createRef(result.rows);
+
       const formatedCommentsTable = commentData.map((obj) => {
+        const convertTimeStamp = convertTimestampToDate(obj);
         return [
-          obj.body,
-          obj.votes,
-          obj.author,
-          new Date(obj.created_at).toISOString(),
+          articleReferenceObject[obj.article_title],
+          convertTimeStamp.body,
+          convertTimeStamp.votes,
+          convertTimeStamp.author,
+          convertTimeStamp.created_at,
         ];
       });
       const InsertedCommentsTable = format(
-        `INSERT INTO comments (body,votes,author,created_at) VALUES %L`,
+        `INSERT INTO comments (article_id,body,votes,author,created_at) VALUES %L RETURNING *`,
         formatedCommentsTable
       );
 
       return db.query(InsertedCommentsTable);
     });
+  // .then((result) => {
+  //   console.log(result.rows, "seeds");
+  // });
 };
 module.exports = seed;
