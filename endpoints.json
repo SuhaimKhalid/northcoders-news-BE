@@ -387,6 +387,13 @@
   }
 
     }
+  },
+      "DELETE /api/comments/:comment_id": {
+    "description": "Delete a comment by its ID",
+    "exampleResponse": {
+      "articles": {}
+
+    }
   }
 
  
