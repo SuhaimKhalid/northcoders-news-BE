@@ -25,7 +25,8 @@ const getArticleId = (req, res, next) => {
 
 const patchVotesByAticleId = (req, res, next) => {
   const { article_id } = req.params;
-  return updateVotesByArticleId(article_id)
+  const { inc_votes } = req.body;
+  return updateVotesByArticleId(article_id, inc_votes)
     .then((result) => {
       res.status(200).send({ article: result });
     })

@@ -154,15 +154,6 @@ describe("Task 5 GET /api/articles/:article_id/comments", () => {
   });
 
   describe("Error handing", () => {
-    test("200: Responds With array of articles", () => {
-      return request(app)
-        .get("/api/articles/1/comments")
-        .expect(200)
-        .then((result) => {
-          const comments = result.body.comments;
-          expect(comments.length).not.toBe(0);
-        });
-    });
     test("404: Not Found Invalid article Id", () => {
       return request(app)
         .get("/api/articles/10000/comments")
@@ -205,15 +196,6 @@ describe("Task 6 POST /api/articles/:article_id/comments", () => {
   });
 
   describe("Error handing", () => {
-    test("200: Responds With array of articles", () => {
-      return request(app)
-        .get("/api/articles/1/comments")
-        .expect(200)
-        .then((result) => {
-          const comments = result.body.comments;
-          expect(comments.length).not.toBe(0);
-        });
-    });
     test("404: Responds with an error when article_id does not exist", () => {
       return request(app)
         .post("/api/articles/9999/comments")
@@ -235,12 +217,12 @@ describe("Task 6 POST /api/articles/:article_id/comments", () => {
   });
 });
 
-xdescribe("Task 7 PATCH /api/articles/:article_id", () => {
+describe("Task 7 PATCH /api/articles/:article_id", () => {
   test("Update the Article by Article Id ", () => {
     const newVote = { inc_votes: 10 };
 
     return request(app)
-      .post("/api/articles/1")
+      .patch("/api/articles/1")
       .send(newVote)
       .expect(200)
       .then((result) => {
@@ -250,20 +232,12 @@ xdescribe("Task 7 PATCH /api/articles/:article_id", () => {
       });
   });
 
-  xdescribe("Error handing", () => {
-    test("200: Responds With array of articles", () => {
-      return request(app)
-        .get("/api/articles/1/comments")
-        .expect(200)
-        .then((result) => {
-          const comments = result.body.comments;
-          expect(comments.length).not.toBe(0);
-        });
-    });
+  describe("Error handing", () => {
     test("404: Responds with an error when article_id does not exist", () => {
+      const newVote = { inc_votes: 10 };
       return request(app)
-        .post("/api/articles/9999")
-        .send({ username: "butter_bridge", body: "How are you doing" })
+        .patch("/api/articles/9999")
+        .send(newVote)
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Not Found");
@@ -271,7 +245,7 @@ xdescribe("Task 7 PATCH /api/articles/:article_id", () => {
     });
     test("400: Responds with an error when required fields are missing", () => {
       return request(app)
-        .post("/api/articles/1/comments")
+        .patch("/api/articles/1")
         .send({}) // empty object
         .expect(400)
         .then(({ body }) => {
