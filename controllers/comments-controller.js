@@ -30,7 +30,6 @@ const deleteCommentById = (req, res, next) => {
 
   return deleteComment(comment_id)
     .then((result) => {
-      console.log(result, "controler");
       if (result === 0) {
         // No rows deleted means comment_id did not exist
         return next({ status: 404, msg: "Comment not found" });
