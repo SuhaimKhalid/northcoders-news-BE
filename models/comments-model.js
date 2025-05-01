@@ -37,4 +37,30 @@ const selectCommentsByArticleId = (article_id, sort_by, order_by) => {
   });
 };
 
-module.exports = { selectCommentsByArticleId };
+const insertNewCommentByArticleId = (article_id, username, body) => {
+  if (!username || !body) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad Request: Missing required fields",
+    });
+  }
+  return db
+    .query("SELECT * FROM comments WHERE article_id=$1", [article_id])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
+      }
+
+      return db
+        .query(
+          "INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3)  RETURNING *;",
+          [article_id, username, body]
+        )
+        .then((result) => {
+          const comments = result.rows[0];
+          return comments;
+        });
+    });
+};
+
+module.exports = { selectCommentsByArticleId, insertNewCommentByArticleId };

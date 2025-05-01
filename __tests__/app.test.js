@@ -70,7 +70,6 @@ describe("Task 3 GET/api/articles", () => {
       .expect(200)
       .then((result) => {
         const article = result.body.article;
-        console.log(article);
         expect(article).toMatchObject({
           article_id: expect.any(Number),
           title: expect.any(String),
@@ -178,6 +177,59 @@ describe("Task 5 GET /api/articles/:article_id/comments", () => {
         .expect(400)
         .then((result) => {
           expect(result.body.msg).toBe("Bad Request");
+        });
+    });
+  });
+});
+
+describe("Task 6 POST /api/articles/:article_id/comments", () => {
+  test("Respond", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "How are you doing!",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then((result) => {
+        const comment = result.body.comment;
+        expect(comment).toHaveProperty("comment_id");
+        expect(comment.article_id).toBe(1);
+        expect(comment.author).toBe("butter_bridge");
+        expect(comment.body).toBe("How are you doing!");
+        expect(comment.votes).toBe(0);
+        expect(comment).toHaveProperty("created_at");
+      });
+  });
+
+  describe("Error handing", () => {
+    test("200: Responds With array of articles", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((result) => {
+          const comments = result.body.comments;
+          expect(comments.length).not.toBe(0);
+        });
+    });
+    test("404: Responds with an error when article_id does not exist", () => {
+      return request(app)
+        .post("/api/articles/9999/comments")
+        .send({ username: "butter_bridge", body: "How are you doing" })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
+    test("400: Responds with an error when required fields are missing", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({}) // empty object
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request: Missing required fields");
         });
     });
   });
