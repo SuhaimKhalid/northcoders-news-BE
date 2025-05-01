@@ -26,7 +26,7 @@ app.get("/api", getApi);
 /** Task 2 */
 app.get("/api/topics", getTopics);
 
-/** Task 3 & 10 */
+/** Task 3 & 10 & 11*/
 app.get("/api/articles", getAllArticles);
 
 /** Task 4 */

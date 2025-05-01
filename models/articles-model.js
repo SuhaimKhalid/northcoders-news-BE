@@ -1,10 +1,9 @@
 const db = require("../db/connection");
 
-const selectAllArticles = (article_id, sort_by, order, join) => {
+const selectAllArticles = (article_id, sort_by, order, topic, join) => {
   if (join === "false") {
     let queryStr = "SELECT * FROM articles";
-
-    const finalQuery = queriescondition(queryStr, sort_by, order);
+    const finalQuery = queriescondition(queryStr, sort_by, order, topic);
     return db.query(finalQuery).then((result) => {
       return result.rows;
     });
@@ -26,26 +25,34 @@ const selectAllArticles = (article_id, sort_by, order, join) => {
     });
   }
 };
-function queriescondition(queryStr, sort_by, order) {
-  // Make GreenListing
+function queriescondition(queryStr, sort_by, order, topic) {
+  // For to add conditon in query for topics
+  const topicGreenListing = ["mitch", "cats"];
+  if (topic && topicGreenListing.includes(topic.toLowerCase())) {
+    queryStr += ` WHERE topic = '${topic.toLowerCase()}';`;
+  }
+  if (topic && !topicGreenListing.includes(topic.toLowerCase())) {
+    return Promise.reject({ status: 400, msg: "Bad Request" });
+  }
+
+  // add order query to main query if ave any sorted column
   const greenListing = ["article_id", "created_at", "votes"];
   if (sort_by && greenListing.includes(sort_by)) {
     queryStr += ` ORDER BY ${sort_by}`;
   }
-
-  // Make GreenListing
-  const orderList = ["ASC", "DESC"];
-  if (order && orderList.includes(order.toUpperCase())) {
-    queryStr += ` ${order.toUpperCase()} `;
-  }
-
   if (sort_by && !greenListing.includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
 
+  // Add Method of order
+  const orderList = ["ASC", "DESC"];
+  if (order && orderList.includes(order.toUpperCase())) {
+    queryStr += ` ${order.toUpperCase()} `;
+  }
   if (order && !orderList.includes(order.toUpperCase())) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
+
   return queryStr;
 }
 
