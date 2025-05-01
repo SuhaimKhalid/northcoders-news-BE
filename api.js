@@ -13,6 +13,7 @@ const {
 const {
   getAllArticles,
   getArticleId,
+  patchVotesByAticleId,
 } = require("./controllers/articles-controller");
 
 app.use(express.json());
@@ -31,6 +32,8 @@ app.get("/api/articles/:article_id", getArticleId);
 app.get("/api/articles/:article_id/comments", getAllCommentOfAticleId);
 
 app.post("/api/articles/:article_id/comments", postNewCommentByArticleId);
+
+app.patch("/api/articles/:article_id", patchVotesByAticleId);
 
 // 400 handler - Handle invalid User Type
 app.use((err, req, res, next) => {

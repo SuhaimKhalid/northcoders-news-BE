@@ -183,7 +183,7 @@ describe("Task 5 GET /api/articles/:article_id/comments", () => {
 });
 
 describe("Task 6 POST /api/articles/:article_id/comments", () => {
-  test("Respond", () => {
+  test("Add New Comment to specific Article id", () => {
     const newComment = {
       username: "butter_bridge",
       body: "How are you doing!",
@@ -217,6 +217,52 @@ describe("Task 6 POST /api/articles/:article_id/comments", () => {
     test("404: Responds with an error when article_id does not exist", () => {
       return request(app)
         .post("/api/articles/9999/comments")
+        .send({ username: "butter_bridge", body: "How are you doing" })
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
+        });
+    });
+    test("400: Responds with an error when required fields are missing", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({}) // empty object
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request: Missing required fields");
+        });
+    });
+  });
+});
+
+xdescribe("Task 7 PATCH /api/articles/:article_id", () => {
+  test("Update the Article by Article Id ", () => {
+    const newVote = { inc_votes: 10 };
+
+    return request(app)
+      .post("/api/articles/1")
+      .send(newVote)
+      .expect(200)
+      .then((result) => {
+        const article = result.body.article;
+        expect(article.votes).toBe(110);
+        expect(article.article_id).toBe(1);
+      });
+  });
+
+  xdescribe("Error handing", () => {
+    test("200: Responds With array of articles", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((result) => {
+          const comments = result.body.comments;
+          expect(comments.length).not.toBe(0);
+        });
+    });
+    test("404: Responds with an error when article_id does not exist", () => {
+      return request(app)
+        .post("/api/articles/9999")
         .send({ username: "butter_bridge", body: "How are you doing" })
         .expect(404)
         .then(({ body }) => {

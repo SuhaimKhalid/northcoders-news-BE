@@ -49,4 +49,7 @@ const selectArticleId = (article_id) => {
     });
 };
 
-module.exports = { selectAllArticles, selectArticleId };
+const updateVotesByArticleId = (article_id) => {
+  console.log(article_id);
+};
+module.exports = { selectAllArticles, selectArticleId, updateVotesByArticleId };
