@@ -254,3 +254,36 @@ describe("Task 7 PATCH /api/articles/:article_id", () => {
     });
   });
 });
+
+describe("Task 8 DELETE /api/comments/:comment_id", () => {
+  test("Delete the comment by comment Id ", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+
+  describe("Error handing", () => {
+    test("404: Responds with an error when comment Id does not exist", () => {
+      const newVote = { inc_votes: 10 };
+      return request(app)
+        .delete("/api/comments/9999")
+        .send(newVote)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Comment not found");
+        });
+    });
+    test("400: Responds with an error when invalid Data Type", () => {
+      return request(app)
+        .delete("/api/comments/author")
+        .send({}) // empty object
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Bad Request");
+        });
+    });
+  });
+});

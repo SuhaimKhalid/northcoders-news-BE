@@ -8,6 +8,7 @@ const { getTopics } = require("./controllers/topics-controller");
 const {
   getAllCommentOfAticleId,
   postNewCommentByArticleId,
+  deleteCommentById,
 } = require("./controllers/comments-controller");
 
 const {
@@ -34,6 +35,8 @@ app.get("/api/articles/:article_id/comments", getAllCommentOfAticleId);
 app.post("/api/articles/:article_id/comments", postNewCommentByArticleId);
 
 app.patch("/api/articles/:article_id", patchVotesByAticleId);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 // 400 handler - Handle invalid User Type
 app.use((err, req, res, next) => {
