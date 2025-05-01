@@ -33,7 +33,7 @@ app.get("/api/articles/:article_id/comments", getAllCommentOfAticleId);
 
 app.post("/api/articles/:article_id/comments", postNewCommentByArticleId);
 
-app.PATCH("/api/articles/:article_id", patchVotesByAticleId);
+app.patch("/api/articles/:article_id", patchVotesByAticleId);
 
 // 400 handler - Handle invalid User Type
 app.use((err, req, res, next) => {

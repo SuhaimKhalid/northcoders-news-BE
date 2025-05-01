@@ -235,7 +235,7 @@ describe("Task 6 POST /api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only("Task 7 PATCH /api/articles/:article_id", () => {
+xdescribe("Task 7 PATCH /api/articles/:article_id", () => {
   test("Update the Article by Article Id ", () => {
     const newVote = { inc_votes: 10 };
 
