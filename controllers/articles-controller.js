@@ -5,8 +5,8 @@ const {
 } = require("../models/articles-model");
 
 const getAllArticles = (req, res, next) => {
-  const { article_id, sort_by, order } = req.query;
-  return selectAllArticles(article_id, sort_by, order)
+  const { article_id, sort_by, order, join } = req.query;
+  return selectAllArticles(article_id, sort_by, order, join)
     .then((result) => {
       res.status(200).send({ articles: result });
     })
@@ -33,4 +33,8 @@ const patchVotesByAticleId = (req, res, next) => {
     .catch(next);
 };
 
-module.exports = { getAllArticles, getArticleId, patchVotesByAticleId };
+module.exports = {
+  getAllArticles,
+  getArticleId,
+  patchVotesByAticleId,
+};

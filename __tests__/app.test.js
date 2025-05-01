@@ -306,12 +306,45 @@ describe("Task 9 GET /api/users", () => {
   });
 
   describe("Error handing", () => {
-    test("400: Responds with an error when invalid Data Type", () => {
+    test("400: Responds with an error when invalid url", () => {
       return request(app)
         .get("/api/user")
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("Not Found");
+        });
+    });
+  });
+});
+
+describe("Task 10 GET/api/articles", () => {
+  test("Responds With sorted array of articles", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=ASC&join=false")
+      .expect(200)
+      .then((result) => {
+        const articles = result.body.articles;
+        expect(articles.length).toBeGreaterThan(0);
+        expect(articles).toBeSortedBy("created_at", { descending: false });
+      });
+  });
+
+  describe("Error handing", () => {
+    test("200: Responds With array of articles", () => {
+      return request(app)
+        .get("/api/articles?join=false")
+        .expect(200)
+        .then((result) => {
+          const articles = result.body.articles;
+          expect(articles.length).not.toBe(0);
+        });
+    });
+    test("400: Bad Request with wrong Column", () => {
+      return request(app)
+        .get("/api/articles/sort_by=author&join=false")
+        .expect(400)
+        .then((result) => {
+          expect(result.body.msg).toBe("Bad Request");
         });
     });
   });

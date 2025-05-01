@@ -1,18 +1,32 @@
 const db = require("../db/connection");
 
-const selectAllArticles = (article_id, sort_by, order) => {
-  let queryStr =
-    "SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
-  let queryArg = [];
-  let queryCount = 0;
+const selectAllArticles = (article_id, sort_by, order, join) => {
+  if (join === "false") {
+    let queryStr = "SELECT * FROM articles";
 
-  if (article_id) {
-    queryStr += ` WHERE article_id = $${++queryCount}`;
-    queryArg.push(article_id);
+    const finalQuery = queriescondition(queryStr, sort_by, order);
+    return db.query(finalQuery).then((result) => {
+      return result.rows;
+    });
+  } else {
+    let queryStr =
+      "SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
+    let queryArg = [];
+    let queryCount = 0;
+
+    if (article_id) {
+      queryStr += ` WHERE article_id = $${++queryCount}`;
+      queryArg.push(article_id);
+    }
+
+    queryStr += " GROUP BY articles.article_id"; // To handle COUNT properly
+    const finalQuery = queriescondition(queryStr, sort_by, order);
+    return db.query(finalQuery, queryArg).then((result) => {
+      return result.rows;
+    });
   }
-
-  queryStr += " GROUP BY articles.article_id"; // To handle COUNT properly
-
+};
+function queriescondition(queryStr, sort_by, order) {
   // Make GreenListing
   const greenListing = ["article_id", "created_at", "votes"];
   if (sort_by && greenListing.includes(sort_by)) {
@@ -32,10 +46,8 @@ const selectAllArticles = (article_id, sort_by, order) => {
   if (order && !orderList.includes(order.toUpperCase())) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
-  return db.query(queryStr, queryArg).then((result) => {
-    return result.rows;
-  });
-};
+  return queryStr;
+}
 
 const selectArticleId = (article_id) => {
   return db
@@ -69,4 +81,9 @@ const updateVotesByArticleId = (article_id, inc_votes) => {
       return result.rows[0];
     });
 };
-module.exports = { selectAllArticles, selectArticleId, updateVotesByArticleId };
+
+module.exports = {
+  selectAllArticles,
+  selectArticleId,
+  updateVotesByArticleId,
+};
