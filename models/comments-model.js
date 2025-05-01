@@ -63,4 +63,20 @@ const insertNewCommentByArticleId = (article_id, username, body) => {
     });
 };
 
-module.exports = { selectCommentsByArticleId, insertNewCommentByArticleId };
+const deleteComment = (comment_id) => {
+  console.log(comment_id);
+
+  return db
+    .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *;", [
+      comment_id,
+    ])
+    .then((result) => {
+      return result.rowCount;
+    });
+};
+
+module.exports = {
+  selectCommentsByArticleId,
+  insertNewCommentByArticleId,
+  deleteComment,
+};
