@@ -262,7 +262,7 @@ xdescribe("Task 7 PATCH /api/articles/:article_id", () => {
     });
     test("404: Responds with an error when article_id does not exist", () => {
       return request(app)
-        .post("/api/articles/9999/comments")
+        .post("/api/articles/9999")
         .send({ username: "butter_bridge", body: "How are you doing" })
         .expect(404)
         .then(({ body }) => {
