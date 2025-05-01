@@ -26,19 +26,25 @@ app.get("/api", getApi);
 /** Task 2 */
 app.get("/api/topics", getTopics);
 
-/** Task 3 */
+/** Task 3 & 10 */
 app.get("/api/articles", getAllArticles);
 
+/** Task 4 */
 app.get("/api/articles/:article_id", getArticleId);
 
+/** Task 5 */
 app.get("/api/articles/:article_id/comments", getAllCommentOfAticleId);
 
+/** Task 6 */
 app.post("/api/articles/:article_id/comments", postNewCommentByArticleId);
 
+/** Task 7 */
 app.patch("/api/articles/:article_id", patchVotesByAticleId);
 
+/** Task 8 */
 app.delete("/api/comments/:comment_id", deleteCommentById);
 
+/** Task 9 */
 app.get("/api/users", getUsers);
 
 // 400 handler - Handle invalid User Type
