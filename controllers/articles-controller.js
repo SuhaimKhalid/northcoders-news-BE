@@ -5,8 +5,8 @@ const {
 } = require("../models/articles-model");
 
 const getAllArticles = (req, res, next) => {
-  const { article_id, sort_by, order, join } = req.query;
-  return selectAllArticles(article_id, sort_by, order, join)
+  const { article_id, sort_by, order, topic, join } = req.query;
+  return selectAllArticles(article_id, sort_by, order, topic, join)
     .then((result) => {
       res.status(200).send({ articles: result });
     })
