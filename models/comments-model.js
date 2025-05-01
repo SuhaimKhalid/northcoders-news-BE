@@ -74,7 +74,6 @@ const deleteComment = (comment_id) => {
       return result.rowCount;
     });
 };
-
 module.exports = {
   selectCommentsByArticleId,
   insertNewCommentByArticleId,
