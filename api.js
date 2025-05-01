@@ -7,12 +7,15 @@ const { getTopics } = require("./controllers/topics-controller");
 
 const {
   getAllCommentOfAticleId,
+  postNewCommentByArticleId,
 } = require("./controllers/comments-controller");
 
 const {
   getAllArticles,
   getArticleId,
 } = require("./controllers/articles-controller");
+
+app.use(express.json());
 
 /** Task 1 */
 app.get("/api", getApi);
@@ -26,6 +29,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id", getArticleId);
 
 app.get("/api/articles/:article_id/comments", getAllCommentOfAticleId);
+
+app.post("/api/articles/:article_id/comments", postNewCommentByArticleId);
 
 // 400 handler - Handle invalid User Type
 app.use((err, req, res, next) => {
