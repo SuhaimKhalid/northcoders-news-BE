@@ -7,7 +7,6 @@ const app = require("../api");
 const topicsdata = require("../db/data/test-data/index");
 
 const seed = require("../db/seeds/seed");
-const articles = require("../db/data/test-data/articles");
 
 /* Set up your beforeEach & afterAll functions here */
 
@@ -283,6 +282,36 @@ describe("Task 8 DELETE /api/comments/:comment_id", () => {
         .expect(400)
         .then(({ body }) => {
           expect(body.msg).toBe("Bad Request");
+        });
+    });
+  });
+});
+
+describe("Task 9 GET /api/users", () => {
+  test("Respond with array of users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((result) => {
+        const user = result.body.users;
+
+        user.forEach((row) => {
+          expect(row).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+
+  describe("Error handing", () => {
+    test("400: Responds with an error when invalid Data Type", () => {
+      return request(app)
+        .get("/api/user")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("Not Found");
         });
     });
   });

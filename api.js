@@ -17,6 +17,7 @@ const {
   patchVotesByAticleId,
 } = require("./controllers/articles-controller");
 
+const { getUsers } = require("./controllers/users-controller");
 app.use(express.json());
 
 /** Task 1 */
@@ -37,6 +38,8 @@ app.post("/api/articles/:article_id/comments", postNewCommentByArticleId);
 app.patch("/api/articles/:article_id", patchVotesByAticleId);
 
 app.delete("/api/comments/:comment_id", deleteCommentById);
+
+app.get("/api/users", getUsers);
 
 // 400 handler - Handle invalid User Type
 app.use((err, req, res, next) => {
