@@ -29,7 +29,7 @@ app.get("/api/topics", getTopics);
 /** Task 3 & 10 & 11*/
 app.get("/api/articles", getAllArticles);
 
-/** Task 4 */
+/** Task 4 & 12*/
 app.get("/api/articles/:article_id", getArticleId);
 
 /** Task 5 */

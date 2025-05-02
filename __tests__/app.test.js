@@ -147,7 +147,18 @@ describe("Task 5 GET /api/articles/:article_id/comments", () => {
       .expect(200)
       .then((result) => {
         const comments = result.body.comments;
+        console.log(comments);
         expect(comments.length).toBeGreaterThan(0);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
         expect(comments).toBeSortedBy("created_at", { descending: true });
       });
   });
@@ -353,7 +364,7 @@ describe("Task 10 GET/api/articles (sorting queries)", () => {
 describe("Task 11 GET/api/articles (topic query)", () => {
   test("Responds With array of articles with respect to specific topic", () => {
     return request(app)
-      .get("/api/articles?topic=cats&join=false")
+      .get("/api/articles/?topic=cats&join=false")
       .expect(200)
       .then((result) => {
         const articles = result.body.articles;
@@ -387,6 +398,48 @@ describe("Task 11 GET/api/articles (topic query)", () => {
     test("400: Bad Request with wrong Column", () => {
       return request(app)
         .get("/api/articles/topic=dogs&join=false")
+        .expect(400)
+        .then((result) => {
+          expect(result.body.msg).toBe("Bad Request");
+        });
+    });
+  });
+});
+
+describe("Task 12 GET/api/articles/: article_id(comment_count)", () => {
+  test("Responds With an objct of total count of comments for a Article ID ", () => {
+    return request(app)
+      .get("/api/articles/1/?countAllComments=true")
+      .expect(200)
+      .then((result) => {
+        const article = result.body.article;
+        console.log(article, "Test File");
+        expect(article).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: 11,
+        });
+      });
+  });
+
+  describe("Error handing", () => {
+    test("404: Not Found Invalid article Id", () => {
+      return request(app)
+        .get("/api/articles/10000/?countAllComments=true")
+        .expect(404)
+        .then((result) => {
+          expect(result.body.msg).toBe("Not Found");
+        });
+    });
+    test("400: Bad Request with wrong data Type", () => {
+      return request(app)
+        .get("/api/articles/article_id/?countAllComments=true")
         .expect(400)
         .then((result) => {
           expect(result.body.msg).toBe("Bad Request");

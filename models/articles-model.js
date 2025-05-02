@@ -8,18 +8,14 @@ const selectAllArticles = (article_id, sort_by, order, topic, join) => {
       return result.rows;
     });
   } else {
-    let queryStr =
-      "SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
+    let queryStr = "SELECT * FROM comments";
     let queryArg = [];
-    let queryCount = 0;
 
     if (article_id) {
-      queryStr += ` WHERE article_id = $${++queryCount}`;
+      queryStr += ` WHERE comments.article_id=$1`;
       queryArg.push(article_id);
     }
-
-    queryStr += " GROUP BY articles.article_id"; // To handle COUNT properly
-    const finalQuery = queriescondition(queryStr, sort_by, order);
+    const finalQuery = queriescondition(queryStr, sort_by, order, topic);
     return db.query(finalQuery, queryArg).then((result) => {
       return result.rows;
     });
@@ -34,7 +30,6 @@ function queriescondition(queryStr, sort_by, order, topic) {
   if (topic && !topicGreenListing.includes(topic.toLowerCase())) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
-
   // add order query to main query if ave any sorted column
   const greenListing = ["article_id", "created_at", "votes"];
   if (sort_by && greenListing.includes(sort_by)) {
@@ -56,16 +51,30 @@ function queriescondition(queryStr, sort_by, order, topic) {
   return queryStr;
 }
 
-const selectArticleId = (article_id) => {
-  return db
-    .query("SELECT * FROM articles WHERE article_id=$1", [article_id])
-    .then((result) => {
-      if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Not Found" });
-      } else {
-        return result.rows[0];
-      }
-    });
+const selectArticleId = (article_id, countAllComment) => {
+  let queryStr = "";
+  if (countAllComment == "true") {
+    queryStr = `SELECT 
+        articles.*,
+        COUNT(comments.comment_id)::INT AS comment_count
+      FROM 
+        articles
+      LEFT JOIN 
+        comments ON articles.article_id = comments.article_id
+      WHERE 
+        articles.article_id = $1
+      GROUP BY 
+        articles.article_id;`;
+  } else {
+    queryStr = "SELECT * FROM articles WHERE article_id=$1";
+  }
+  return db.query(queryStr, [article_id]).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Not Found" });
+    } else {
+      return result.rows[0];
+    }
+  });
 };
 
 const updateVotesByArticleId = (article_id, inc_votes) => {
