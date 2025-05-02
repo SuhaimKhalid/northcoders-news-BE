@@ -6,6 +6,7 @@ const {
 
 const getAllArticles = (req, res, next) => {
   const { article_id, sort_by, order, topic, join } = req.query;
+
   return selectAllArticles(article_id, sort_by, order, topic, join)
     .then((result) => {
       res.status(200).send({ articles: result });
@@ -15,8 +16,9 @@ const getAllArticles = (req, res, next) => {
 
 const getArticleId = (req, res, next) => {
   const { article_id } = req.params;
+  const { countAllComments } = req.query;
 
-  return selectArticleId(article_id)
+  return selectArticleId(article_id, countAllComments)
     .then((result) => {
       res.status(200).send({ article: result });
     })
