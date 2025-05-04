@@ -398,6 +398,7 @@ describe("Task 11 GET/api/articles (topic query)", () => {
         const articles = result.body.articles;
 
         expect(articles.length).toBeGreaterThan(0);
+        console.log(articles);
         articles.forEach((article) => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
@@ -432,7 +433,6 @@ describe("Task 12 GET/api/articles/: article_id(comment_count)", () => {
       .expect(200)
       .then((result) => {
         const article = result.body.article;
-        console.log(article, "Test File");
         expect(article).toMatchObject({
           article_id: expect.any(Number),
           title: expect.any(String),
