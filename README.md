@@ -1,18 +1,14 @@
 # NC News Seeding
 
+A full-stack Node.js and PostgreSQL project with environment-specific configurations for development and testing.
+
 # App Link
 
 https://nc-news-6r1i.onrender.com/
 
-# Summary
+# 2. Set Up Environment Variables
 
-This app have a databse to show different kind of article with specific topics ,users and their comments
-
-# To Run First Create ENV Files
-
-## How To Add ENV File And Connect to DataBase
-
-- First you have to create to .env files with the names of:
+- First you have to create two .env files with the names of:
 - 1 .env.test (For Test)
 - 2 .env.development (For Development)
 
@@ -21,6 +17,12 @@ This app have a databse to show different kind of article with specific topics ,
 
 - 1 PGDATABASE = nc_news(NAME OF YOUR DATABASE )
 - 2 PGDATABASE = nc_news_test(NAME OF YOUR Test DATABASE )
+
+# Summary
+
+## 📝 Summary
+
+This app connects to a PostgreSQL database to display a collection of articles categorized by specific topics. It also features user profiles and allows users to view and interact with comments on each article.
 
 # Instructions
 
