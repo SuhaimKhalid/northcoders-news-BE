@@ -18,8 +18,6 @@ https://nc-news-6r1i.onrender.com/
 - 1 PGDATABASE = nc_news(NAME OF YOUR DATABASE )
 - 2 PGDATABASE = nc_news_test(NAME OF YOUR Test DATABASE )
 
-# Summary
-
 ## 📝 Summary
 
 This app connects to a PostgreSQL database to display a collection of articles categorized by specific topics. It also features user profiles and allows users to view and interact with comments on each article.
