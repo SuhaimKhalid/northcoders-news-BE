@@ -52,20 +52,11 @@ describe("Task 2 GET/api/topics", () => {
       });
   });
 });
-
-describe("Task 3 GET/api/articles", () => {
-  test("200: Responds With array of articles", () => {
+//TASK 3
+describe("Task 3 GET/api/articles/:article_id", () => {
+  test("Responds With an article from articles", () => {
     return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then((result) => {
-        const articles = result.body.articles;
-        expect(articles.length).not.toBe(0);
-      });
-  });
-  test("200: Responds With singal Article from articles", () => {
-    return request(app)
-      .get("/api/articles/1")
+      .get("/api/articles/5")
       .expect(200)
       .then((result) => {
         const article = result.body.article;
@@ -73,57 +64,85 @@ describe("Task 3 GET/api/articles", () => {
           article_id: expect.any(Number),
           title: expect.any(String),
           topic: expect.any(String),
-          body: expect.any(String),
+          author: expect.any(String),
           created_at: expect.any(String),
           votes: expect.any(Number),
           article_img_url: expect.any(String),
-          author: expect.any(String),
         });
       });
   });
-  test("404: Not Found Invalid article Id", () => {
-    return request(app)
-      .get("/api/articles/1000")
-      .expect(404)
-      .then((result) => {
-        expect(result.body.msg).toBe("Not Found");
-      });
-  });
-  test("400: Bad Request with wrong data Type", () => {
-    return request(app)
-      .get("/api/articles/article_id")
-      .expect(400)
-      .then((result) => {
-        expect(result.body.msg).toBe("Bad Request");
-      });
+
+  describe("Error handling", () => {
+    test("404: Not Found Invalid article Id", () => {
+      return request(app)
+        .get("/api/articles/1000")
+        .expect(404)
+        .then((result) => {
+          expect(result.body.msg).toBe("Not Found");
+        });
+    });
+    test("400: Bad Request with wrong data Type", () => {
+      return request(app)
+        .get("/api/articles/article_id")
+        .expect(400)
+        .then((result) => {
+          expect(result.body.msg).toBe("Bad Request");
+        });
+    });
   });
 });
 
 describe("Task 4 GET/api/articles", () => {
-  test("Responds With array of articles", () => {
+  test("Responds With array of articles if no sorting", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((result) => {
+        const articles = result.body.articles;
+
+        expect(articles.length).toBeGreaterThan(0);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("Responds With array of articles with sorting", () => {
     return request(app)
       .get("/api/articles?sort_by=created_at&order=desc")
       .expect(200)
       .then((result) => {
         const articles = result.body.articles;
+
         expect(articles.length).toBeGreaterThan(0);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
 
   describe("Error handing", () => {
-    test("200: Responds With array of articles", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then((result) => {
-          const articles = result.body.articles;
-          expect(articles.length).not.toBe(0);
-        });
-    });
     test("404: Not Found Invalid article Id", () => {
       return request(app)
-        .get("/api/articles/10000")
+        .get("/api/articles/10000/sort_by=created_at")
         .expect(404)
         .then((result) => {
           expect(result.body.msg).toBe("Not Found");
@@ -141,13 +160,31 @@ describe("Task 4 GET/api/articles", () => {
 });
 
 describe("Task 5 GET /api/articles/:article_id/comments", () => {
-  test("Responds With array of comments with specific Article ID ", () => {
+  test("Responds With array of comments with specific Article ID with no sorting", () => {
     return request(app)
-      .get("/api/articles/1/comments?sort_by=created_at&order_by=desc")
+      .get("/api/articles/1/comments")
       .expect(200)
       .then((result) => {
         const comments = result.body.comments;
-        console.log(comments);
+        expect(comments.length).toBeGreaterThan(0);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("Responds With array of comments with specific Article ID with sorting", () => {
+    return request(app)
+      .get("/api/articles/1/comments?sort_by=created_at&order=desc")
+      .expect(200)
+      .then((result) => {
+        const comments = result.body.comments;
         expect(comments.length).toBeGreaterThan(0);
         comments.forEach((comment) => {
           expect(comment).toMatchObject({
@@ -331,7 +368,7 @@ describe("Task 9 GET /api/users", () => {
 describe("Task 10 GET/api/articles (sorting queries)", () => {
   test("Responds With sorted array of articles", () => {
     return request(app)
-      .get("/api/articles?sort_by=created_at&order=ASC&join=false")
+      .get("/api/articles?sort_by=created_at&order=ASC")
       .expect(200)
       .then((result) => {
         const articles = result.body.articles;
@@ -341,18 +378,9 @@ describe("Task 10 GET/api/articles (sorting queries)", () => {
   });
 
   describe("Error handing", () => {
-    test("200: Responds With array of articles", () => {
-      return request(app)
-        .get("/api/articles?join=false")
-        .expect(200)
-        .then((result) => {
-          const articles = result.body.articles;
-          expect(articles.length).not.toBe(0);
-        });
-    });
     test("400: Bad Request with wrong Column", () => {
       return request(app)
-        .get("/api/articles/sort_by=author&join=false")
+        .get("/api/articles/sort_by=author")
         .expect(400)
         .then((result) => {
           expect(result.body.msg).toBe("Bad Request");
@@ -364,7 +392,7 @@ describe("Task 10 GET/api/articles (sorting queries)", () => {
 describe("Task 11 GET/api/articles (topic query)", () => {
   test("Responds With array of articles with respect to specific topic", () => {
     return request(app)
-      .get("/api/articles/?topic=cats&join=false")
+      .get("/api/articles/?topic=cats")
       .expect(200)
       .then((result) => {
         const articles = result.body.articles;
@@ -386,18 +414,9 @@ describe("Task 11 GET/api/articles (topic query)", () => {
   });
 
   describe("Error handing", () => {
-    test("200: Responds With array of articles", () => {
-      return request(app)
-        .get("/api/articles?join=false")
-        .expect(200)
-        .then((result) => {
-          const articles = result.body.articles;
-          expect(articles.length).not.toBe(0);
-        });
-    });
     test("400: Bad Request with wrong Column", () => {
       return request(app)
-        .get("/api/articles/topic=dogs&join=false")
+        .get("/api/articles/topic=dogs")
         .expect(400)
         .then((result) => {
           expect(result.body.msg).toBe("Bad Request");

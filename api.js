@@ -28,11 +28,11 @@ app.get("/api", getApi);
 /** Task 2 */
 app.get("/api/topics", getTopics);
 
-/** Task 3 & 10 & 11*/
-app.get("/api/articles", getAllArticles);
-
-/** Task 4 & 12*/
+/** Task 3 & 12*/
 app.get("/api/articles/:article_id", getArticleId);
+
+/** Task 4 & 10 & 11*/
+app.get("/api/articles", getAllArticles);
 
 /** Task 5 */
 app.get("/api/articles/:article_id/comments", getAllCommentOfAticleId);

@@ -1,25 +1,34 @@
 const db = require("../db/connection");
 
-const selectAllArticles = (article_id, sort_by, order, topic, join) => {
-  if (join === "false") {
-    let queryStr = "SELECT * FROM articles";
-    const finalQuery = queriescondition(queryStr, sort_by, order, topic);
-    return db.query(finalQuery).then((result) => {
-      return result.rows;
-    });
-  } else {
-    let queryStr = "SELECT * FROM comments";
-    let queryArg = [];
+const selectAllArticles = (article_id, sort_by, order, topic) => {
+  let queryStr = "";
 
-    if (article_id) {
-      queryStr += ` WHERE comments.article_id=$1`;
-      queryArg.push(article_id);
-    }
-    const finalQuery = queriescondition(queryStr, sort_by, order, topic);
-    return db.query(finalQuery, queryArg).then((result) => {
-      return result.rows;
-    });
+  if (topic) {
+    queryStr = "SELECT * FROM articles";
+  } else {
+    queryStr = `SELECT 
+     articles.article_id,
+    articles.author,
+    articles.title,
+    articles.topic,
+    articles.created_at,
+    articles.votes,
+    articles.article_img_url,
+    COUNT (comments.comment_id)::INT as comment_count FROM articles
+      LEFT JOIN comments ON articles.article_id = comments.article_id
+      GROUP BY articles.author, 
+  articles.title, 
+  articles.article_id, 
+  articles.topic, 
+  articles.created_at, 
+  articles.votes, 
+  articles.article_img_url`;
   }
+  const finalQuery = queriescondition(queryStr, sort_by, order, topic);
+
+  return db.query(finalQuery).then((result) => {
+    return result.rows;
+  });
 };
 function queriescondition(queryStr, sort_by, order, topic) {
   // For to add conditon in query for topics
@@ -53,7 +62,7 @@ function queriescondition(queryStr, sort_by, order, topic) {
 
 const selectArticleId = (article_id, countAllComment) => {
   let queryStr = "";
-  if (countAllComment == "true") {
+  if (countAllComment) {
     queryStr = `SELECT 
         articles.*,
         COUNT(comments.comment_id)::INT AS comment_count
