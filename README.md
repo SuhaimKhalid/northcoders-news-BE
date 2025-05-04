@@ -8,7 +8,7 @@ https://nc-news-6r1i.onrender.com/
 
 This app have a databse to show different kind of article with specific topics ,users and their comments
 
-# To Run Fist Create ENV Files
+# To Run First Create ENV Files
 
 ## How To Add ENV File And Connect to DataBase
 
