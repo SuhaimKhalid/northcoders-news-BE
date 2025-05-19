@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
-
+const cors = require("cors");
 const { dasboard, getApi } = require("./controllers/api-controller");
-
+app.use(cors());
 const { getTopics } = require("./controllers/topics-controller");
 
 const {
