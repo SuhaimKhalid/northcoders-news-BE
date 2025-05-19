@@ -32,7 +32,7 @@ const selectAllArticles = (article_id, sort_by, order, topic) => {
 };
 function queriescondition(queryStr, sort_by, order, topic) {
   // For to add conditon in query for topics
-  const topicGreenListing = ["mitch", "cats", "cooking", "Cooding", "Football"];
+  const topicGreenListing = ["mitch", "cats", "cooking", "coding", "football"];
   if (topic && topicGreenListing.includes(topic.toLowerCase())) {
     queryStr += ` WHERE topic = '${topic.toLowerCase()}';`;
   }
