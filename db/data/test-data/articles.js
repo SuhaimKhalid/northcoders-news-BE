@@ -40,6 +40,16 @@ module.exports = [
       "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
   },
   {
+    title: "StudentSUESMitch",
+    topic: "mitch",
+    author: "rogersop",
+    body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
+    created_at: 1588731240000,
+    votes: 0,
+    article_img_url:
+      "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+  },
+  {
     title: "UNCOVERED: catspiracy to bring down democracy",
     topic: "cats",
     author: "rogersop",

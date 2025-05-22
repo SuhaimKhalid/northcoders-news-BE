@@ -12,9 +12,9 @@ const {
 } = require("./controllers/comments-controller");
 
 const {
-  getAllArticles,
   getArticleId,
   patchVotesByAticleId,
+  getAllArticles,
 } = require("./controllers/articles-controller");
 
 const { getUsers } = require("./controllers/users-controller");
@@ -27,6 +27,9 @@ app.get("/api", getApi);
 
 /** Task 2 */
 app.get("/api/topics", getTopics);
+
+// /** Custom to get by article title**/
+// app.get("/api/articles/title/:title", getArticleTitle);
 
 /** Task 3 & 12*/
 app.get("/api/articles/:article_id", getArticleId);

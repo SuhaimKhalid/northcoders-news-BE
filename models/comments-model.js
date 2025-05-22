@@ -46,7 +46,7 @@ const insertNewCommentByArticleId = (article_id, username, body) => {
     });
   }
   return db
-    .query("SELECT * FROM comments WHERE article_id=$1", [article_id])
+    .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
     .then((result) => {
       if (result.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Not Found" });
@@ -54,12 +54,13 @@ const insertNewCommentByArticleId = (article_id, username, body) => {
 
       return db
         .query(
-          "INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3)  RETURNING *;",
+          `INSERT INTO comments (article_id, author, body)
+           VALUES ($1, $2, $3)
+           RETURNING comment_id, article_id, author, body, votes, created_at;`,
           [article_id, username, body]
         )
         .then((result) => {
-          const comments = result.rows[0];
-          return comments;
+          return result.rows[0];
         });
     });
 };

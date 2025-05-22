@@ -2,12 +2,13 @@ const {
   selectAllArticles,
   selectArticleId,
   updateVotesByArticleId,
+  selecttArticleByTitle,
 } = require("../models/articles-model");
 
 const getAllArticles = (req, res, next) => {
-  const { article_id, sort_by, order, topic } = req.query;
+  const { article_id, sort_by, order, topic, title } = req.query;
 
-  return selectAllArticles(article_id, sort_by, order, topic)
+  return selectAllArticles(article_id, sort_by, order, topic, title)
     .then((result) => {
       res.status(200).send({ articles: result });
     })
@@ -34,6 +35,16 @@ const patchVotesByAticleId = (req, res, next) => {
     })
     .catch(next);
 };
+
+// const getArticleTitle = (req, res, next) => {
+//   const { title } = req.params;
+
+//   return selecttArticleByTitle(title)
+//     .then((result) => {
+//       res.status(200).send({ article: result });
+//     })
+//     .catch(next);
+// };
 
 module.exports = {
   getAllArticles,

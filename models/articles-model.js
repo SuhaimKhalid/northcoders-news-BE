@@ -1,9 +1,11 @@
 const db = require("../db/connection");
+const articles = require("../db/data/test-data/articles");
 
-const selectAllArticles = (article_id, sort_by, order, topic) => {
+const selectAllArticles = (article_id, sort_by, order, topic, title) => {
   let queryStr = "";
-
-  if (topic) {
+  if (title) {
+    queryStr = `SELECT * FROM articles WHERE title=${title}`;
+  } else if (topic) {
     queryStr = "SELECT * FROM articles";
   } else {
     queryStr = `SELECT 
@@ -26,7 +28,9 @@ const selectAllArticles = (article_id, sort_by, order, topic) => {
   }
   const finalQuery = queriescondition(queryStr, sort_by, order, topic);
 
+  console.log(finalQuery);
   return db.query(finalQuery).then((result) => {
+    console.log(result);
     return result.rows;
   });
 };
@@ -106,7 +110,18 @@ const updateVotesByArticleId = (article_id, inc_votes) => {
       return result.rows[0];
     });
 };
+// const selecttArticleByTitle = (title) => {
+//   let queryStr = "SELECT * FROM articles WHERE title=$1";
 
+//   return db.query(queryStr, [title]).then((result) => {
+//     if (result.rows.length === 0) {
+//       return Promise.reject({ status: 404, msg: "Not Found" });
+//     } else {
+//       console.log(result);
+//       return result.rows[0];
+//     }
+//   });
+// };
 module.exports = {
   selectAllArticles,
   selectArticleId,

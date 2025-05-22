@@ -92,6 +92,8 @@ describe("Task 3 GET/api/articles/:article_id", () => {
   });
 });
 
+//Custom
+
 describe("Task 4 GET/api/articles", () => {
   test("Responds With array of articles if no sorting", () => {
     return request(app)
@@ -398,7 +400,7 @@ describe("Task 11 GET/api/articles (topic query)", () => {
         const articles = result.body.articles;
 
         expect(articles.length).toBeGreaterThan(0);
-        console.log(articles);
+
         articles.forEach((article) => {
           expect(article).toMatchObject({
             article_id: expect.any(Number),
