@@ -3,9 +3,7 @@ const articles = require("../db/data/test-data/articles");
 
 const selectAllArticles = (article_id, sort_by, order, topic, title) => {
   let queryStr = "";
-  if (title) {
-    queryStr = `SELECT * FROM articles WHERE title=${title}`;
-  } else if (topic) {
+  if (topic) {
     queryStr = "SELECT * FROM articles";
   } else {
     queryStr = `SELECT 
@@ -44,7 +42,7 @@ function queriescondition(queryStr, sort_by, order, topic) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
   // add order query to main query if ave any sorted column
-  const greenListing = ["article_id", "created_at", "votes"];
+  const greenListing = ["article_id", "created_at", "votes", "comment_count"];
   if (sort_by && greenListing.includes(sort_by)) {
     queryStr += ` ORDER BY ${sort_by}`;
   }
