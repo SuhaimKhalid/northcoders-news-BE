@@ -378,6 +378,24 @@ describe("Task 10 GET/api/articles (sorting queries)", () => {
         expect(articles).toBeSortedBy("created_at", { descending: false });
       });
   });
+  test("200: responds with all articles sorted by created_at ascending for topic 'cats'", () => {
+    return request(app)
+      .get("/api/articles?topic=cats&sort_by=created_at&order=ASC")
+      .expect(200)
+      .then(({ body }) => {
+        const articles = body.articles;
+        expect(Array.isArray(articles)).toBe(true);
+        expect(articles.length).toBeGreaterThan(0);
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("title");
+          expect(article.topic).toBe("cats");
+        });
+        const dates = articles.map((a) => new Date(a.created_at));
+        const sorted = [...dates].sort((a, b) => a - b);
+        expect(dates).toEqual(sorted);
+      });
+  });
 
   describe("Error handing", () => {
     test("400: Bad Request with wrong Column", () => {

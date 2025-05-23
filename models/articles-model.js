@@ -1,29 +1,39 @@
 const db = require("../db/connection");
 const articles = require("../db/data/test-data/articles");
 
-const selectAllArticles = (article_id, sort_by, order, topic, title) => {
-  let queryStr = "";
-  if (topic) {
-    queryStr = "SELECT * FROM articles";
-  } else {
-    queryStr = `SELECT 
-     articles.article_id,
-    articles.author,
-    articles.title,
-    articles.topic,
-    articles.created_at,
-    articles.votes,
-    articles.article_img_url,
-    COUNT (comments.comment_id)::INT as comment_count FROM articles
-      LEFT JOIN comments ON articles.article_id = comments.article_id
-      GROUP BY articles.author, 
-  articles.title, 
-  articles.article_id, 
-  articles.topic, 
-  articles.created_at, 
-  articles.votes, 
-  articles.article_img_url`;
-  }
+const selectAllArticles = (article_id, sort_by, order, topic) => {
+  let queryStr = `SELECT 
+      articles.article_id,
+      articles.author,
+      articles.title,
+      articles.topic,
+      articles.created_at,
+      articles.votes,
+      articles.article_img_url,
+      COUNT(comments.comment_id)::INT AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id`;
+  // if (topic) {
+  //   queryStr = "SELECT * FROM articles";
+  // } else {
+  //   queryStr = `SELECT
+  //    articles.article_id,
+  //   articles.author,
+  //   articles.title,
+  //   articles.topic,
+  //   articles.created_at,
+  //   articles.votes,
+  //   articles.article_img_url,
+  //   COUNT (comments.comment_id)::INT as comment_count FROM articles
+  //     LEFT JOIN comments ON articles.article_id = comments.article_id
+  //     GROUP BY articles.author,
+  // articles.title,
+  // articles.article_id,
+  // articles.topic,
+  // articles.created_at,
+  // articles.votes,
+  // articles.article_img_url`;
+  // }
   const finalQuery = queriescondition(queryStr, sort_by, order, topic);
 
   console.log(finalQuery);
@@ -35,31 +45,33 @@ const selectAllArticles = (article_id, sort_by, order, topic, title) => {
 function queriescondition(queryStr, sort_by, order, topic) {
   // For to add conditon in query for topics
   const topicGreenListing = ["mitch", "cats", "cooking", "coding", "football"];
+  // if (topic && topicGreenListing.includes(topic.toLowerCase())) {
+  //   queryStr += ` WHERE topic = '${topic.toLowerCase()}';`;
+  // }
   if (topic && topicGreenListing.includes(topic.toLowerCase())) {
-    queryStr += ` WHERE topic = '${topic.toLowerCase()}';`;
+    queryStr += ` WHERE articles.topic = '${topic.toLowerCase()}'`;
+  } else if (topic && !topicGreenListing.includes(topic.toLowerCase())) {
+    throw { status: 400, msg: "Bad Request: Topic does not exist" };
   }
-  if (topic && !topicGreenListing.includes(topic.toLowerCase())) {
-    return Promise.reject({ status: 400, msg: "Bad Request" });
-  }
+  queryStr += ` GROUP BY articles.article_id`;
+
   // add order query to main query if ave any sorted column
-  const greenListing = ["article_id", "created_at", "votes", "comment_count"];
+  const greenListing = ["created_at", "votes", "comment_count"];
   if (sort_by && greenListing.includes(sort_by)) {
     queryStr += ` ORDER BY ${sort_by}`;
-  }
-  if (sort_by && !greenListing.includes(sort_by)) {
-    return Promise.reject({ status: 400, msg: "Bad Request" });
+  } else if (sort_by) {
+    throw { status: 400, msg: "Bad Request: Invalid sort_by column" };
   }
 
   // Add Method of order
   const orderList = ["ASC", "DESC"];
   if (order && orderList.includes(order.toUpperCase())) {
-    queryStr += ` ${order.toUpperCase()} `;
-  }
-  if (order && !orderList.includes(order.toUpperCase())) {
-    return Promise.reject({ status: 400, msg: "Bad Request" });
+    queryStr += ` ${order.toUpperCase()}`;
+  } else if (order) {
+    throw { status: 400, msg: "Bad Request: Invalid order" };
   }
 
-  return queryStr;
+  return queryStr + ";";
 }
 
 const selectArticleId = (article_id, countAllComment) => {
